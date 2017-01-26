@@ -1,3 +1,59 @@
+//============================================================================
+// Name        : WavTest.cpp
+// Author      : Derrs
+// Version     :
+// Copyright   : Your copyright notice
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
+#include	<stdio.h>
+#include	<string.h>
+#include    <math.h>
+
+/* Include this header file to use functions from libsndfile. */
+#include	<sndfile.h>
+#include    <iostream>
+
+using namespace std;
+
+/*	This will be the length of the buffer used to hold.frames while
+**	we process them.
+*/
+#define		BUFFER_LEN	1100024
+
+/* libsndfile can handle more than 6 channels but we'll restrict it to 6. */
+#define		MAX_CHANNELS	2
+
+/* Function prototype. */
+static void process_data (short *data, int count, int channels) ;
+
+
+
+
+int main (void)
+{	/* This is a buffer of double precision floating point values
+	** which will hold our data while we process it.
+	*/
+	static short data [BUFFER_LEN] ;
+
+	/* A SNDFILE is very much like a FILE in the Standard C library. The
+	** sf_open function return an SNDFILE* pointer when they sucessfully
+	** open the specified file.
+	*/
+	SNDFILE	*infile, *outfile ;
+
+	/* A pointer to an SF_INFO struct is passed to sf_open.
+	** On read, the library fills this struct with information about the fil
+e.
+	** On write, the struct must be filled in before calling sf_open.
+	*/
+	SF_INFO		sfinfo ;
+	int			readcount ;
+	const char	*infilename = "input1.wav" ;
+	const char	*outfilename = "output.wav" ;
+	double signal_max;
+
+	/* The SF_INFO struct must be initialized before using it.
 	*/
 	memset (&sfinfo, 0, sizeof (sfinfo));
 
@@ -34,7 +90,7 @@ owing
 	cout << "samplerate " << sfinfo.samplerate << endl;
 	cout << "format " << sfinfo.format << endl;
 	cout << "sections " << sfinfo.sections << endl;
-	cout << "seekable " << sfinfo.seekable << endl;//prints string and then variable value
+	cout << "seekable " << sfinfo.seekable << endl;
 
 	sf_command (infile, SFC_CALC_SIGNAL_MAX, &signal_max, sizeof (signal_max)) ;
 	cout << "Signal MAX is " << signal_max << endl;
@@ -72,7 +128,7 @@ static void process_data (short *data, int count, int channels)
 	double channel_gain [MAX_CHANNELS] = {3.5, 1};
 	int k, chan ;
 	short max = 0;
-	short min = 0;//declares variables
+	short min = 0;
 
 
 	/* Process the data here.
@@ -112,14 +168,10 @@ f
 			}
 
 		}
-
-	for (chan = 0 ; chan < channels ; chan ++)
-	{
-		data [k] = 1 / ( max - min )( data[k] - min);
-
 	}
 
 	cout << "The Maximum signed value = " << max << endl;
 	cout << "The Minimum signed value = " << min << endl;
 	return ;
 } /* process_data */
+

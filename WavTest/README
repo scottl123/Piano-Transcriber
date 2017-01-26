@@ -1,0 +1,15 @@
+The original file that I recieved from you is the input.wav from the Good all notes WAV file. The input1.wav file is the file with one of the channels removed. The output.wav file is the file that is being generated from the code. The output1.wav file is just a copy of the input1.wav file, it was the export of the Audacity input.wav file.
+
+
+When using these types of files, you should include signal metadata in 
+file name. So input1.wav file should be something like this:
+
+
+piano_1Channel_16bit_signed_44100_samplerate.wav
+
+
+This way anyone who uses the file for signal processing knows what they are dealing with. 
+
+The program enclosed reads in the input1.wav file, computes the max and min values while also expanding the gain to the maximum possible value without clipping (clipping is when you go over a limit, lets say your maximum value is 32768 and you have a sample that is at 15000, if you increase the gain to 15000*(32768/14500) = 33897. This means that the value that you increased would overflow the two byte signed value  range of +32768/-32768 (total unsigned range of two bytes is 65536). Therefore you would clip the signal and wrap the value of 33897-32768= 1129 into the negative range which would be represented as (-1129 in decimal, and 01110010111 in two's compliment binary form which is   0x397 in HEX). Look up two's compliment to figure out how to calculate negative number in binary. 
+
+All that being said, make sure that you do not clip the signal. The best way to avoid this for 16 bit signed data types is to keep the value below 2^16 = +-32768. This can be achieved by finding the absolute maximum value of the signal and calculating the gain by 32768/MAX = Gain. Multiply that gain by every value to scale the value up or down. Cheers.  
